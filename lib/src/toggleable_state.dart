@@ -10,8 +10,7 @@ class ToggleableState {
 
   MaybeAsyncCallback? _notifyUpdate;
 
-  String? _idForOnDebounce;
-  String? _idForOffDebounce;
+  String? _idForDebounce;
 
   final _turnOnListeners = <MaybeAsyncCallback>{};
   final _turnOffListeners = <MaybeAsyncCallback>{};
@@ -37,16 +36,16 @@ class ToggleableState {
   void registerNotifyUpdate(MaybeAsyncCallback callback) => _notifyUpdate = callback;
 
   void addListener({
-    VoidCallback? turnOnCallback,
-    VoidCallback? turnOffCallback,
+    MaybeAsyncCallback? turnOnCallback,
+    MaybeAsyncCallback? turnOffCallback,
   }) {
     if (turnOnCallback != null) _turnOnListeners.add(turnOnCallback);
     if (turnOffCallback != null) _turnOffListeners.add(turnOffCallback);
   }
 
   void removeListeners({
-    VoidCallback? turnOnCallback,
-    VoidCallback? turnOffCallback,
+    MaybeAsyncCallback? turnOnCallback,
+    MaybeAsyncCallback? turnOffCallback,
   }) {
     if (turnOnCallback != null) _turnOnListeners.remove(turnOnCallback);
     if (turnOffCallback != null) _turnOffListeners.remove(turnOffCallback);
@@ -65,7 +64,7 @@ class ToggleableState {
 
     _notifyUpdate?.call();
     EasyDebounce.debounce(
-      _idForOnDebounce ??= getRandomString(),
+      _idForDebounce ??= getRandomString(),
       _listenerDelay,
       () async {
         for (var idx = 0; idx < _turnOnListeners.length; idx++) {
@@ -81,7 +80,7 @@ class ToggleableState {
 
     _notifyUpdate?.call();
     EasyDebounce.debounce(
-      _idForOffDebounce ??= getRandomString(),
+      _idForDebounce ??= getRandomString(),
       _listenerDelay,
       () async {
         for (var idx = 0; idx < _turnOffListeners.length; idx++) {
