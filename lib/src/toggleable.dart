@@ -29,4 +29,12 @@ enum Toggleable {
         return off();
     }
   }
+
+  static Toggleable from(bool value) {
+    if (value) {
+      return Toggleable.on;
+    } else {
+      return Toggleable.off;
+    }
+  }
 }
