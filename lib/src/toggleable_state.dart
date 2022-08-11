@@ -33,7 +33,8 @@ class ToggleableState {
         _notifyUpdate = notifyUpdate,
         _listenerDelay = listenerDelay;
 
-  void registerNotifyUpdate(MaybeAsyncCallback callback) => _notifyUpdate = callback;
+  void registerNotifyUpdate(MaybeAsyncCallback callback) =>
+      _notifyUpdate = callback;
 
   void addListener({
     MaybeAsyncCallback? turnOnCallback,

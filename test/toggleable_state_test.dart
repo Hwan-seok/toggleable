@@ -19,7 +19,7 @@ void main() {
       expect(toggleableState.state, Toggleable.off);
     });
 
-    test('notifyUpdate should called immediately after state changed if registered', () {
+    test('notifyUpdate should called immediately after state changed', () {
       final toggleableState = ToggleableState();
       bool isUpdated = false;
       toggleableState.registerNotifyUpdate(() => isUpdated = true);

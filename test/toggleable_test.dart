@@ -41,7 +41,7 @@ void main() {
       expect(toggleable.toggled().isOff, isFalse);
     });
 
-    test('.when() executes the function by current state - (off should be called)', () {
+    test('.when() executes the function by current state - (off)', () {
       Toggleable toggleableOff = Toggleable.off;
 
       bool didOnFunctionCalled = false;
@@ -56,7 +56,7 @@ void main() {
       expect(didOffFunctionCalled, isTrue);
     });
 
-    test('.when() executes the function by current state - (on should be called)', () {
+    test('.when() executes the function by current state - (on)', () {
       Toggleable toggleableOff = Toggleable.on;
 
       bool didOnFunctionCalled = false;
