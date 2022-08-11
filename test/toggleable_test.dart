@@ -4,6 +4,11 @@ import 'package:toggleable/toggleable.dart';
 
 void main() {
   group('Toggleable', () {
+    test('.from() initializes from bool value', () {
+      expect(Toggleable.from(true), Toggleable.on);
+      expect(Toggleable.from(false), Toggleable.off);
+    });
+
     test('.toggled() should return toggled value', () {
       Toggleable toggleable1 = Toggleable.off;
       expect(toggleable1.toggled(), Toggleable.on);
