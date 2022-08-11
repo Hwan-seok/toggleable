@@ -1,3 +1,6 @@
+## 0.0.4
+- Add some docs
+
 ## 0.0.3
 
 - Add static method for initializing `Toggleable` from bool value
