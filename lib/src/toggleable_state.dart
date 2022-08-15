@@ -33,8 +33,7 @@ class ToggleableState {
         _notifyUpdate = notifyUpdate,
         _listenerDelay = listenerDelay;
 
-  void registerNotifyUpdate(MaybeAsyncCallback callback) =>
-      _notifyUpdate = callback;
+  void registerNotifyUpdate(MaybeAsyncCallback callback) => _notifyUpdate = callback;
 
   void addListener({
     MaybeAsyncCallback? turnOnCallback,
@@ -90,4 +89,10 @@ class ToggleableState {
       },
     );
   }
+
+  T when<T>({
+    required T Function() on,
+    required T Function() off,
+  }) =>
+      _state.when(on: on, off: off);
 }
