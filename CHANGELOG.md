@@ -1,3 +1,6 @@
+## 0.0.5
+- Add `when` method to `ToggleableState` for comfort 
+
 ## 0.0.4
 - Add some docs
 
