@@ -76,7 +76,7 @@ void main() {
       expect(streamController.stream, emitsInOrder([1, 2, 3, 4]));
     });
 
-    test('callback should executed only once if listenerDelay provided', () {
+    test('callback should executed only once if listenerDelay is provided', () {
       final toggleableState = ToggleableState(listenerDelay: Duration(seconds: 1));
       final streamController = StreamController<int>();
 
@@ -92,6 +92,69 @@ void main() {
       toggleableState.toggle();
 
       expect(streamController.stream, emitsInOrder([1]));
+    });
+
+    test('completer completes if listenerDelay is provided', () async {
+      final toggleableState = ToggleableState(listenerDelay: Duration(seconds: 1));
+      final streamController = StreamController<int>();
+      bool isCompleted = false;
+      toggleableState.addListener(
+        turnOnCallback: () => streamController.add(1),
+        turnOffCallback: () => streamController.add(1),
+      );
+
+      expect(toggleableState.delayedListenerCompleter, isNull);
+
+      final togglingFuture = toggleableState.toggle();
+      expect(toggleableState.delayedListenerCompleter, isNotNull);
+
+      toggleableState.delayedListenerCompleter?.future.then((_) => isCompleted = true);
+
+      expect(isCompleted, isFalse);
+      await togglingFuture;
+      expect(isCompleted, isTrue);
+    });
+
+    test('completer completes if listenerDelay is provided', () async {
+      final toggleableState = ToggleableState(listenerDelay: Duration(seconds: 1));
+      final streamController = StreamController<int>();
+      bool isCompleted = false;
+      toggleableState.addListener(
+        turnOnCallback: () => streamController.add(1),
+        turnOffCallback: () => streamController.add(1),
+      );
+
+      expect(toggleableState.delayedListenerCompleter, isNull);
+
+      final togglingFuture = toggleableState.toggle();
+      expect(toggleableState.delayedListenerCompleter, isNotNull);
+
+      toggleableState.delayedListenerCompleter?.future.then((_) => isCompleted = true);
+
+      expect(isCompleted, isFalse);
+      await togglingFuture;
+      expect(isCompleted, isTrue);
+    });
+
+    test('completer completes even if listenerDelay is not provided', () async {
+      final toggleableState = ToggleableState();
+      final streamController = StreamController<int>();
+      bool isCompleted = false;
+      toggleableState.addListener(
+        turnOnCallback: () => streamController.add(1),
+        turnOffCallback: () => streamController.add(1),
+      );
+
+      expect(toggleableState.delayedListenerCompleter, isNull);
+
+      final togglingFuture = toggleableState.toggle();
+      expect(toggleableState.delayedListenerCompleter, isNotNull);
+
+      toggleableState.delayedListenerCompleter?.future.then((_) => isCompleted = true);
+
+      expect(isCompleted, isFalse);
+      await togglingFuture;
+      expect(isCompleted, isTrue);
     });
   });
 }
