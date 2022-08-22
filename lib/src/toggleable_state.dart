@@ -17,6 +17,8 @@ class ToggleableState {
 
   final Duration _listenerDelay;
 
+  Completer<void>? _delayedListenerCompleter;
+
   Toggleable get state => _state;
 
   bool get isOn => _state.isOn;
@@ -24,6 +26,9 @@ class ToggleableState {
 
   bool get isEnabled => _state.isEnabled;
   bool get isDisabled => _state.isDisabled;
+
+  Completer<void>? get delayedListenerCompleter => _delayedListenerCompleter;
+  bool get willCallback => _delayedListenerCompleter != null;
 
   ToggleableState({
     Toggleable initialState = Toggleable.off,
@@ -63,6 +68,7 @@ class ToggleableState {
     if (withoutNotify) return;
 
     _notifyUpdate?.call();
+    final completer = _delayedListenerCompleter ??= Completer();
     EasyDebounce.debounce(
       _idForDebounce ??= getRandomString(),
       _listenerDelay,
@@ -70,8 +76,11 @@ class ToggleableState {
         for (var idx = 0; idx < _turnOnListeners.length; idx++) {
           await _turnOnListeners.elementAt(idx)();
         }
+        _delayedListenerCompleter?.complete();
       },
     );
+
+    return completer.future;
   }
 
   Future<void> off({bool withoutNotify = false}) async {
@@ -79,6 +88,7 @@ class ToggleableState {
     if (withoutNotify) return;
 
     _notifyUpdate?.call();
+    final completer = _delayedListenerCompleter ??= Completer();
     EasyDebounce.debounce(
       _idForDebounce ??= getRandomString(),
       _listenerDelay,
@@ -86,8 +96,10 @@ class ToggleableState {
         for (var idx = 0; idx < _turnOffListeners.length; idx++) {
           await _turnOffListeners.elementAt(idx)();
         }
+        _delayedListenerCompleter?.complete();
       },
     );
+    return completer.future;
   }
 
   T when<T>({
