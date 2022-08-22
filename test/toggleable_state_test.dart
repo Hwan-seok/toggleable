@@ -22,7 +22,7 @@ void main() {
     test('notifyUpdate should called immediately after state changed', () {
       final toggleableState = ToggleableState();
       bool isUpdated = false;
-      toggleableState.registerNotifyUpdate(() => isUpdated = true);
+      toggleableState.registerOnUpdatedCallback(() => isUpdated = true);
 
       toggleableState.toggle();
 
@@ -77,7 +77,7 @@ void main() {
     });
 
     test('callback should executed only once if listenerDelay is provided', () {
-      final toggleableState = ToggleableState(listenerDelay: Duration(seconds: 1));
+      final toggleableState = ToggleableState(listenersDelay: Duration(seconds: 1));
       final streamController = StreamController<int>();
 
       toggleableState.addListener(
@@ -95,7 +95,7 @@ void main() {
     });
 
     test('completer completes if listenerDelay is provided', () async {
-      final toggleableState = ToggleableState(listenerDelay: Duration(seconds: 1));
+      final toggleableState = ToggleableState(listenersDelay: Duration(seconds: 1));
       final streamController = StreamController<int>();
       bool isCompleted = false;
       toggleableState.addListener(
@@ -116,7 +116,7 @@ void main() {
     });
 
     test('completer completes if listenerDelay is provided', () async {
-      final toggleableState = ToggleableState(listenerDelay: Duration(seconds: 1));
+      final toggleableState = ToggleableState(listenersDelay: Duration(seconds: 1));
       final streamController = StreamController<int>();
       bool isCompleted = false;
       toggleableState.addListener(
