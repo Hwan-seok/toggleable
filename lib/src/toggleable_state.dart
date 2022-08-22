@@ -76,7 +76,7 @@ class ToggleableState {
         for (var idx = 0; idx < _turnOnListeners.length; idx++) {
           await _turnOnListeners.elementAt(idx)();
         }
-        _delayedListenerCompleter?.complete();
+        _completeCompleter();
       },
     );
 
@@ -96,10 +96,15 @@ class ToggleableState {
         for (var idx = 0; idx < _turnOffListeners.length; idx++) {
           await _turnOffListeners.elementAt(idx)();
         }
-        _delayedListenerCompleter?.complete();
+        _completeCompleter();
       },
     );
     return completer.future;
+  }
+
+  void _completeCompleter() {
+    _delayedListenerCompleter?.complete();
+    _delayedListenerCompleter = null;
   }
 
   T when<T>({
