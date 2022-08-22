@@ -1,3 +1,6 @@
+## 0.0.6
+- Add the ability to know listener callbacks are called
+
 ## 0.0.5
 - Add `when` method to `ToggleableState` for comfort 
 
