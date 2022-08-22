@@ -1,3 +1,6 @@
+## 0.0.7
+- Fix completer does not re-initializing after completed  
+
 ## 0.0.6
 - Add the ability to know listener callbacks are called
 
