@@ -134,6 +134,7 @@ void main() {
       expect(isCompleted, isFalse);
       await togglingFuture;
       expect(isCompleted, isTrue);
+      expect(toggleableState.delayedListenerCompleter, isNull);
     });
 
     test('completer completes even if listenerDelay is not provided', () async {
@@ -155,6 +156,7 @@ void main() {
       expect(isCompleted, isFalse);
       await togglingFuture;
       expect(isCompleted, isTrue);
+      expect(toggleableState.delayedListenerCompleter, isNull);
     });
   });
 }
