@@ -71,7 +71,8 @@ class ToggleableState {
 
   /// registers the [onUpdate]
   /// [callback] is called immediately after the state updated.
-  void registerOnUpdatedCallback(MaybeAsyncCallback callback) => _onUpdateState = callback;
+  void registerOnUpdatedCallback(MaybeAsyncCallback callback) =>
+      _onUpdateState = callback;
 
   /// add listeners that called after state changed
   /// [turnOnCallback] is called after [on] is called.
