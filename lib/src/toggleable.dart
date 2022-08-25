@@ -3,6 +3,18 @@ enum Toggleable {
   off,
   ;
 
+  const Toggleable();
+
+  /// Factory method that creates [Toggleable] from the boolean.
+  /// [Toggleable.from(true)] returns [Toggleable.on]
+  factory Toggleable.from(bool value) {
+    if (value) {
+      return Toggleable.on;
+    } else {
+      return Toggleable.off;
+    }
+  }
+
   /// create and returns toggled value.
   Toggleable toggled() {
     switch (this) {
@@ -50,16 +62,6 @@ enum Toggleable {
         return on();
       case Toggleable.off:
         return off();
-    }
-  }
-
-  /// Static factory method that creates [Toggleable] from the boolean.
-  /// [Toggleable.from(true)] returns [Toggleable.on]
-  static Toggleable from(bool value) {
-    if (value) {
-      return Toggleable.on;
-    } else {
-      return Toggleable.off;
     }
   }
 }
