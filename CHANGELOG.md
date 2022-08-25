@@ -1,3 +1,6 @@
+## 1.0.1
+- Change from() to factory constructor
+
 ## 1.0.0
 - Release stable version
 - Add some docs
