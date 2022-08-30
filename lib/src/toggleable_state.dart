@@ -8,7 +8,7 @@ import 'package:toggleable/toggleable.dart';
 class ToggleableState {
   Toggleable _state;
 
-  MaybeAsyncCallback? _onUpdateState;
+  final _onUpdateCallbacks = <MaybeAsyncCallback>{};
 
   String? _idForDebounce;
 
@@ -38,12 +38,12 @@ class ToggleableState {
 
   /// [initialState] sets the initial state.
   ///
-  /// You can register the callback method to [onUpdateState].
+  /// You can register the multiple callback method to [_onUpdateCallbacks] through [addOnUpdatedCallback].
   /// This is executed immediately after the [state] changed.
   ///
   /// When you pass [listenersDelay] as [Duration.zero], the listeners are called immediately after onUpdate called
   ///
-  /// If you pass the non-zero delay, the listeners added by [addListener] are called after [listenersDelay]
+  /// If you pass the non-zero delay, the listeners added by [addDebouncedListener] are called after [listenersDelay]
   /// If the state is changed through [on], [off] or [toggle] before the listeners are called, the previous callback is canceled(debounced)
   ///
   /// For example, let the delay is 500ms, the listeners are not called before 500ms is passed between the state changes.
@@ -59,26 +59,27 @@ class ToggleableState {
   /// If you call API on every button tap, the server could dive to the harmful state like at least increase load or at most deadlocks.
   /// In this case, you can use [ToggleableState] with [listenersDelay].
   ///
-  /// When you call [toggle], the [onUpdateState] is called immediately and it is usually the method that updates the UI like [setState].
-  /// And after the [listenersDelay] passed, [listeners](API) is called.
+  /// When you call [toggle], the [_onUpdateCallbacks] are called immediately in sequence of registered
+  /// [_onUpdateCallbacks] are usually the method that updates the UI like [setState].
+  /// And after the [listenersDelay] passed, [_turnOnListeners] & [_turnOffListeners] executed that usually calls the API.
   ToggleableState({
     Toggleable initialState = Toggleable.off,
-    MaybeAsyncCallback? onUpdateState,
     Duration listenersDelay = Duration.zero,
   })  : _state = initialState,
-        _onUpdateState = onUpdateState,
         _listenersDelay = listenersDelay;
 
-  /// registers the [onUpdate]
+  /// Registers the [callback] from [_onUpdateCallbacks]
   /// [callback] is called immediately after the state updated.
-  void registerOnUpdatedCallback(MaybeAsyncCallback callback) =>
-      _onUpdateState = callback;
+  void addOnUpdatedCallback(MaybeAsyncCallback callback) => _onUpdateCallbacks.add(callback);
+
+  /// Removes [callback] from [onUpdateCallback]
+  void removeOnUpdatedCallback(MaybeAsyncCallback callback) => _onUpdateCallbacks.remove(callback);
 
   /// add listeners that called after state changed
   /// [turnOnCallback] is called after [on] is called.
   /// [turnOffCallback] is called after [off] is called.
   /// When you call [toggle], it calls the appropriate callback respect to changing state.
-  void addListener({
+  void addDebouncedListener({
     MaybeAsyncCallback? turnOnCallback,
     MaybeAsyncCallback? turnOffCallback,
   }) {
@@ -86,8 +87,20 @@ class ToggleableState {
     if (turnOffCallback != null) _turnOffListeners.add(turnOffCallback);
   }
 
+  /// Shortcut for adding identical on & off callbacks to addDebouncedListeners
+  void addBothDebouncedListeners(MaybeAsyncCallback callback) {
+    _turnOnListeners.add(callback);
+    _turnOffListeners.add(callback);
+  }
+
+  /// Shortcut for removing identical on & off callbacks to removeDebouncedListeners
+  void removeBothDebouncedListeners(MaybeAsyncCallback callback) {
+    _turnOnListeners.remove(callback);
+    _turnOffListeners.remove(callback);
+  }
+
   /// remove listeners
-  void removeListeners({
+  void removeDebouncedListener({
     MaybeAsyncCallback? turnOnCallback,
     MaybeAsyncCallback? turnOffCallback,
   }) {
@@ -112,7 +125,10 @@ class ToggleableState {
     _state = Toggleable.on;
     if (withoutNotify) return;
 
-    _onUpdateState?.call();
+    for (final callback in _onUpdateCallbacks) {
+      await callback();
+    }
+
     final completer = _delayedListenerCompleter ??= Completer();
     EasyDebounce.debounce(
       _idForDebounce ??= getRandomString(),
@@ -135,7 +151,10 @@ class ToggleableState {
     _state = Toggleable.off;
     if (withoutNotify) return;
 
-    _onUpdateState?.call();
+    for (final callback in _onUpdateCallbacks) {
+      await callback();
+    }
+
     final completer = _delayedListenerCompleter ??= Completer();
     EasyDebounce.debounce(
       _idForDebounce ??= getRandomString(),
