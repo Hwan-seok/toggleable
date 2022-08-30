@@ -8,7 +8,7 @@ import 'package:toggleable/toggleable.dart';
 class ToggleableState {
   Toggleable _state;
 
-  final _onUpdateCallbacks = <MaybeAsyncCallback>{};
+  final _onUpdateListeners = <MaybeAsyncCallback>{};
 
   String? _idForDebounce;
 
@@ -38,7 +38,7 @@ class ToggleableState {
 
   /// [initialState] sets the initial state.
   ///
-  /// You can register the multiple callback method to [_onUpdateCallbacks] through [addOnUpdatedCallback].
+  /// You can register the multiple callback method to [_onUpdateListeners] through [addOnUpdatedCallback].
   /// This is executed immediately after the [state] changed.
   ///
   /// When you pass [listenersDelay] as [Duration.zero], the listeners are called immediately after onUpdate called
@@ -59,8 +59,8 @@ class ToggleableState {
   /// If you call API on every button tap, the server could dive to the harmful state like at least increase load or at most deadlocks.
   /// In this case, you can use [ToggleableState] with [listenersDelay].
   ///
-  /// When you call [toggle], the [_onUpdateCallbacks] are called immediately in sequence of registered
-  /// [_onUpdateCallbacks] are usually the method that updates the UI like [setState].
+  /// When you call [toggle], the [_onUpdateListeners] are called immediately in sequence of registered
+  /// [_onUpdateListeners] are usually the method that updates the UI like [setState].
   /// And after the [listenersDelay] passed, [_turnOnListeners] & [_turnOffListeners] executed that usually calls the API.
   ToggleableState({
     Toggleable initialState = Toggleable.off,
@@ -68,12 +68,12 @@ class ToggleableState {
   })  : _state = initialState,
         _listenersDelay = listenersDelay;
 
-  /// Registers the [callback] from [_onUpdateCallbacks]
+  /// Registers the [callback] from [_onUpdateListeners]
   /// [callback] is called immediately after the state updated.
-  void addOnUpdatedCallback(MaybeAsyncCallback callback) => _onUpdateCallbacks.add(callback);
+  void addOnUpdatedCallback(MaybeAsyncCallback callback) => _onUpdateListeners.add(callback);
 
   /// Removes [callback] from [onUpdateCallback]
-  void removeOnUpdatedCallback(MaybeAsyncCallback callback) => _onUpdateCallbacks.remove(callback);
+  void removeOnUpdatedCallback(MaybeAsyncCallback callback) => _onUpdateListeners.remove(callback);
 
   /// add listeners that called after state changed
   /// [turnOnCallback] is called after [on] is called.
@@ -111,21 +111,24 @@ class ToggleableState {
   /// Toggles the current state.
   ///
   /// [withoutNotify] decides whether to call listeners.
-  Future<void> toggle({bool withoutNotify = false}) async {
+  /// [forceCallback] forces calling the callbacks that previously registered even if the state is not changed.
+  Future<void> toggle({bool withoutNotify = false, bool forceCallback = false}) async {
     return _state.toggled().when(
-          on: () => on(withoutNotify: withoutNotify),
-          off: () => off(withoutNotify: withoutNotify),
+          on: () => on(withoutNotify: withoutNotify, forceCallback: forceCallback),
+          off: () => off(withoutNotify: withoutNotify, forceCallback: forceCallback),
         );
   }
 
   /// Changes the current state as [Toggleable.on]
   ///
   /// [withoutNotify] decides whether to call listeners.
-  Future<void> on({bool withoutNotify = false}) async {
+  /// [forceCallback] forces calling the callbacks that previously registered even if the state is not changed.
+  Future<void> on({bool withoutNotify = false, bool forceCallback = false}) async {
+    if (_state == Toggleable.on && !forceCallback) return;
     _state = Toggleable.on;
     if (withoutNotify) return;
 
-    for (final callback in _onUpdateCallbacks) {
+    for (final callback in _onUpdateListeners) {
       await callback();
     }
 
@@ -147,11 +150,13 @@ class ToggleableState {
   /// Changes the current state as [Toggleable.off]
   ///
   /// [withoutNotify] decides whether to call listeners.
-  Future<void> off({bool withoutNotify = false}) async {
+  /// [forceCallback] forces calling the callbacks that previously registered even if the state is not changed.
+  Future<void> off({bool withoutNotify = false, bool forceCallback = false}) async {
+    if (_state == Toggleable.off && !forceCallback) return;
     _state = Toggleable.off;
     if (withoutNotify) return;
 
-    for (final callback in _onUpdateCallbacks) {
+    for (final callback in _onUpdateListeners) {
       await callback();
     }
 
