@@ -8,7 +8,7 @@ import 'package:toggleable/toggleable.dart';
 class ToggleableState {
   Toggleable _state;
 
-  final _onUpdateListeners = <MaybeAsyncCallback>{};
+  final _onUpdateListeners = <StateCallback>{};
 
   String? _idForDebounce;
 
@@ -70,10 +70,10 @@ class ToggleableState {
 
   /// Registers the [callback] from [_onUpdateListeners]
   /// [callback] is called immediately after the state updated.
-  void addOnUpdatedCallback(MaybeAsyncCallback callback) => _onUpdateListeners.add(callback);
+  void addOnUpdatedCallback(StateCallback callback) => _onUpdateListeners.add(callback);
 
   /// Removes [callback] from [onUpdateCallback]
-  void removeOnUpdatedCallback(MaybeAsyncCallback callback) => _onUpdateListeners.remove(callback);
+  void removeOnUpdatedCallback(StateCallback callback) => _onUpdateListeners.remove(callback);
 
   /// add listeners that called after state changed
   /// [turnOnCallback] is called after [on] is called.
@@ -129,7 +129,7 @@ class ToggleableState {
     if (withoutNotify) return;
 
     for (final callback in _onUpdateListeners) {
-      await callback();
+      await callback(_state);
     }
 
     final completer = _delayedListenerCompleter ??= Completer();
@@ -157,7 +157,7 @@ class ToggleableState {
     if (withoutNotify) return;
 
     for (final callback in _onUpdateListeners) {
-      await callback();
+      await callback(_state);
     }
 
     final completer = _delayedListenerCompleter ??= Completer();

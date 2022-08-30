@@ -22,11 +22,57 @@ void main() {
     test('notifyUpdate should called immediately after state changed', () {
       final toggleableState = ToggleableState();
       bool isUpdated = false;
-      toggleableState.addOnUpdatedCallback(() => isUpdated = true);
+      toggleableState.addOnUpdatedCallback((_) => isUpdated = true);
 
       toggleableState.toggle();
 
       expect(isUpdated, isTrue);
+    });
+
+    test('notifyUpdate should pass the changed state', () {
+      final toggleableState_1 = ToggleableState();
+      Toggleable? result_1;
+      toggleableState_1.addOnUpdatedCallback((changed) => result_1 = changed);
+      toggleableState_1.on();
+      expect(result_1, Toggleable.on);
+
+      final toggleableState_2 = ToggleableState(initialState: Toggleable.on);
+      Toggleable? result_2;
+      toggleableState_2.addOnUpdatedCallback((changed) => result_2 = changed);
+      toggleableState_2.off();
+      expect(result_2, Toggleable.off);
+    });
+
+    test('does not callback if state not changed - on', () {
+      final toggleableState = ToggleableState(initialState: Toggleable.on);
+      toggleableState.addOnUpdatedCallback((changed) => fail("Should not be called"));
+      toggleableState.on();
+    });
+
+    test('does not callback if state not changed - off', () {
+      final toggleableState = ToggleableState(initialState: Toggleable.off);
+      toggleableState.addOnUpdatedCallback((changed) => fail("Should not be called"));
+      toggleableState.off();
+    });
+
+    test(
+        'should callback even though the state is not changed if [forceCallback] passed as true - on',
+        () {
+      final toggleableState = ToggleableState(initialState: Toggleable.on);
+      Toggleable? reported;
+      toggleableState.addOnUpdatedCallback((changed) => reported = changed);
+      toggleableState.on(forceCallback: true);
+      expect(reported, Toggleable.on);
+    });
+
+    test(
+        'should callback even though the state is not changed if [forceCallback] passed as true - off',
+        () {
+      final toggleableState = ToggleableState(initialState: Toggleable.off);
+      Toggleable? reported;
+      toggleableState.addOnUpdatedCallback((changed) => reported = changed);
+      toggleableState.off(forceCallback: true);
+      expect(reported, Toggleable.off);
     });
   });
 
