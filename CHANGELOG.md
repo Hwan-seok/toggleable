@@ -1,3 +1,6 @@
+## 2.1.0
+- feat!: onUpdateCallback is now passes changed state
+
 ## 2.0.0
 - feat!: onUpdateCallback has ability to register multiple callbacks
 - feat!: Change listeners to be not notified if state not changed
