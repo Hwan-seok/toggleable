@@ -1,3 +1,8 @@
+## 2.0.0
+- feat!: onUpdateCallback has ability to register multiple callbacks
+- feat!: Change listeners to be not notified if state not changed
+  - Also added the way to notify forcefully even though the state is not changed
+
 ## 1.0.2
 - Format code
 
