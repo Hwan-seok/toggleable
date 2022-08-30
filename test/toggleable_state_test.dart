@@ -22,7 +22,7 @@ void main() {
     test('notifyUpdate should called immediately after state changed', () {
       final toggleableState = ToggleableState();
       bool isUpdated = false;
-      toggleableState.registerOnUpdatedCallback(() => isUpdated = true);
+      toggleableState.addOnUpdatedCallback(() => isUpdated = true);
 
       toggleableState.toggle();
 
@@ -35,10 +35,10 @@ void main() {
       final toggleableState = ToggleableState();
       final streamController = StreamController<int>();
 
-      toggleableState.addListener(turnOnCallback: () => streamController.add(1));
-      toggleableState.addListener(turnOnCallback: () => streamController.add(2));
-      toggleableState.addListener(turnOnCallback: () => streamController.add(3));
-      toggleableState.addListener(turnOnCallback: () => streamController.add(4));
+      toggleableState.addDebouncedListener(turnOnCallback: () => streamController.add(1));
+      toggleableState.addDebouncedListener(turnOnCallback: () => streamController.add(2));
+      toggleableState.addDebouncedListener(turnOnCallback: () => streamController.add(3));
+      toggleableState.addDebouncedListener(turnOnCallback: () => streamController.add(4));
 
       toggleableState.on();
 
@@ -50,22 +50,22 @@ void main() {
 
       final streamController = StreamController<int>();
 
-      toggleableState.addListener(
+      toggleableState.addDebouncedListener(
         turnOnCallback: () => Future.delayed(Duration(milliseconds: 400)).then(
           (value) => streamController.add(1),
         ),
       );
-      toggleableState.addListener(
+      toggleableState.addDebouncedListener(
         turnOnCallback: () => Future.delayed(Duration(milliseconds: 300)).then(
           (value) => streamController.add(2),
         ),
       );
-      toggleableState.addListener(
+      toggleableState.addDebouncedListener(
         turnOnCallback: () => Future.delayed(Duration(milliseconds: 200)).then(
           (value) => streamController.add(3),
         ),
       );
-      toggleableState.addListener(
+      toggleableState.addDebouncedListener(
         turnOnCallback: () => Future.delayed(Duration(milliseconds: 100)).then(
           (value) => streamController.add(4),
         ),
@@ -80,7 +80,7 @@ void main() {
       final toggleableState = ToggleableState(listenersDelay: Duration(seconds: 1));
       final streamController = StreamController<int>();
 
-      toggleableState.addListener(
+      toggleableState.addDebouncedListener(
         turnOnCallback: () => streamController.add(1),
         turnOffCallback: () => streamController.add(1),
       );
@@ -98,7 +98,7 @@ void main() {
       final toggleableState = ToggleableState(listenersDelay: Duration(seconds: 1));
       final streamController = StreamController<int>();
       bool isCompleted = false;
-      toggleableState.addListener(
+      toggleableState.addDebouncedListener(
         turnOnCallback: () => streamController.add(1),
         turnOffCallback: () => streamController.add(1),
       );
@@ -119,7 +119,7 @@ void main() {
       final toggleableState = ToggleableState(listenersDelay: Duration(seconds: 1));
       final streamController = StreamController<int>();
       bool isCompleted = false;
-      toggleableState.addListener(
+      toggleableState.addDebouncedListener(
         turnOnCallback: () => streamController.add(1),
         turnOffCallback: () => streamController.add(1),
       );
@@ -141,7 +141,7 @@ void main() {
       final toggleableState = ToggleableState();
       final streamController = StreamController<int>();
       bool isCompleted = false;
-      toggleableState.addListener(
+      toggleableState.addDebouncedListener(
         turnOnCallback: () => streamController.add(1),
         turnOffCallback: () => streamController.add(1),
       );
