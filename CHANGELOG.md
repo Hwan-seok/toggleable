@@ -1,3 +1,7 @@
+## 2.1.1
+- fix: Change Toggleable.from from factory method to static
+  - This is because of the interoperability to `json_serializable`
+
 ## 2.1.0
 - feat!: onUpdateCallback is now passes changed state
 
