@@ -7,7 +7,7 @@ enum Toggleable {
 
   /// Factory method that creates [Toggleable] from the boolean.
   /// [Toggleable.from(true)] returns [Toggleable.on]
-  factory Toggleable.from(bool value) {
+  static from(bool value) {
     if (value) {
       return Toggleable.on;
     } else {
